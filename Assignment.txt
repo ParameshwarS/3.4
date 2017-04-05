@@ -1,0 +1,28 @@
+1 HDFS Federation :
+
+Hdfs Federation was designed to limit failures.
+In hadoop 1.x ,namenode acts as a single point of failure.(If it goes down,Entire system fails); 
+HDFS Federation avoids this by maintaining multiple namenodes.
+Those namenodes are independent of each other.
+They donot require coordination among themselves.
+Eventhough one namenode fails the namespace volume managed by other name nodes are alive.
+
+Advantages:
+Multiple namenodes are in an active-standby mode.
+If the active namnode fails the standby name nodes becomes active.
+Both namenodes share the edit logs.
+
+
+
+
+2.How HDFS handles failures while writing data?
+
+Data read/write are performed using a pipelined architecture.
+Packets in the ack queue are added to the front of data queue.
+Current block in good datanodes is given a new identity and it is informed to
+the namenode.
+The datanode that is failed is removed from the pipeline and a new pipeline is constructed from
+the 2 good datanodes and remaining of the block’s data is written to the good datanodes in the pipeline.
+The namenode arranges for further replica of the block to be created on another node.
+If minimum replicas (1) are written, the write will succeed and the block is replicated 
+across the cluster until the target replication factor 3 is reached.
